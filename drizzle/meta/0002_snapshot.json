@@ -1,0 +1,91 @@
+{
+  "id": "6044ddac-4765-4389-9d99-e514287f8c2a",
+  "prevId": "15b34dc3-c3bd-4455-89ee-c10b63f2ed8c",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.quickchat_user": {
+      "name": "quickchat_user",
+      "schema": "",
+      "columns": {
+        "userid": {
+          "name": "userid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "username": {
+          "name": "username",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "image_url": {
+          "name": "image_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "quickchat_user_userid_unique": {
+          "name": "quickchat_user_userid_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "userid"
+          ]
+        },
+        "quickchat_user_email_unique": {
+          "name": "quickchat_user_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      }
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
