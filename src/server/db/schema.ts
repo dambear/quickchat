@@ -1,4 +1,5 @@
 
 
+export { user } from "./schema/user";
 
-export { default as user } from "./schema/user";
+export { userSchema } from "./schema/user";
