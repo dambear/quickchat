@@ -2,9 +2,7 @@ import { handle } from "hono/vercel";
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
 import { z } from "zod";
-import { db } from "~/server/db"; // Make sure this is set up correctly
-import { userSchema } from "~/server/db/schema"; // Adjust according to your schema
-import type { Context } from "hono";
+
 
 import { getAllUsersRoute } from "../_routes/user/route";
 import { getAllUsers } from "../_handlers/user/handler";

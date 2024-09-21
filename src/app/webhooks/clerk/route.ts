@@ -3,9 +3,7 @@ import { headers } from "next/headers";
 
 import type { WebhookEvent } from "@clerk/nextjs/server";
 
-import {
-  createUser,
-} from "~/server/db/services/userService";
+import { createUser } from "~/server/db/services/user";
 
 
 export async function POST(req: Request) {
@@ -63,20 +61,25 @@ export async function POST(req: Request) {
     const { id, email_addresses, username, first_name, last_name, image_url } =
       evt.data;
 
-    const email = email_addresses[0]?.email_address;
+    const email = email_addresses[0]?.email_address ?? null; // Default to null if undefined
 
     const user = {
-      userid: id,
-      email: email,
-      username: username ?? "", // Default to empty string if null
-      firstName: first_name ?? "", // Ensure firstName is a string
-      lastName: last_name ?? "", // Ensure lastName is a string
-      image_url: image_url ?? "",
+      id: id || null, // Ensure id is a string or null
+      email: email, // Email can be string or null
+      username: username ?? null, // Username can be null
+      firstName: first_name ?? null, // First name can be null
+      lastName: last_name ?? null, // Last name can be null
+      image_url: image_url ?? null, // Image URL can be null
+      isActive: false, // Default value for isActive
+      createdAt: new Date(), // Default to current date
     };
 
-    console.log(user);
-
-    await createUser(user);
+    try {
+      const newUser = await createUser(user);
+      console.log("User created successfully:", newUser);
+    } catch (error) {
+      console.error("Error during user creation:", error);
+    }
   }
 
   if (eventType === "user.updated") {

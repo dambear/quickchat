@@ -1,10 +1,9 @@
 import { handle } from "hono/vercel";
-import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
-import { getUserRoute } from "../_routes/user/route";
-import { getUser } from "../_handlers/user/handler";
+import { swaggerUI } from "@hono/swagger-ui";
+import { getAllUsersRoute, getUserRoute } from "../_routes/user/route";
+import { getAllUsers, getUser } from "../_handlers/user/handler";
 
-// Create an instance of OpenAPIHono
 const app = new OpenAPIHono();
 
 // Define your OpenAPI specification
@@ -19,8 +18,10 @@ app.doc("/api/doc", {
 // Define Swagger UI endpoint
 app.get("/api/ui", swaggerUI({ url: "/api/doc" }));
 
-// Define Users api
+// Register the route with the handler
 app.openapi(getUserRoute, getUser);
+
+app.openapi(getAllUsersRoute, getAllUsers);
 
 // Export handler for Vercel Edge Functions
 export const GET = handle(app);

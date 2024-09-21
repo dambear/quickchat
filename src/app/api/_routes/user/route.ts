@@ -2,9 +2,10 @@ import { createRoute } from "@hono/zod-openapi";
 import { userSchema } from "~/server/db/schema";
 import { userParamSchema } from "~/server/db/schema/user";
 
+// Route for getting a user by ID
 export const getUserRoute = createRoute({
   method: "get",
-  path: "api/user/{id}",
+  path: "/api/users/{id}",
   request: {
     params: userParamSchema,
   },
@@ -15,7 +16,7 @@ export const getUserRoute = createRoute({
           schema: userSchema,
         },
       },
-      description: "Retrieve a specific user by id",
+      description: "Retrieve the user",
     },
     404: {
       description: "User not found",

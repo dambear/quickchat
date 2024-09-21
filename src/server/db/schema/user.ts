@@ -6,20 +6,25 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 
+import type { InferSelectModel, InferInsertModel } from "drizzle-orm";
+
 // Function to create tables with a specific prefix
 export const createTable = pgTableCreator((name) => `quickchat_${name}`);
 
 // Define the User table
 export const user = createTable("user", {
-  id: varchar("id").unique().notNull(),
-  email: varchar("email").unique().notNull(),
-  username: varchar("username").notNull(),
-  firstName: varchar("first_name").notNull(),
-  lastName: varchar("last_name").notNull(),
+  id: varchar("id").unique(),
+  email: varchar("email").unique(),
+  username: varchar("username"),
+  firstName: varchar("first_name"),
+  lastName: varchar("last_name"),
   image_url: varchar("image_url"),
-  isActive: boolean("is_active").notNull().default(false),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  isActive: boolean("is_active").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
 });
+
+export type User = InferSelectModel<typeof user>;
+export type NewUser = InferInsertModel<typeof user>;
 
 // Zod schema for API responses
 export const userSchema = z.object({
@@ -37,9 +42,9 @@ export const userSchema = z.object({
   createdAt: z.string().openapi({ example: "2024-09-20T08:11:32.068Z" }),
 });
 
-
+// Parameter schema for user ID
 export const userParamSchema = z.object({
-  userId: z
+  id: z
     .string()
     .min(3)
     .openapi({
