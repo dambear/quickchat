@@ -1,9 +1,11 @@
 import { Webhook } from "svix";
 import { headers } from "next/headers";
 
-import type { WebhookEvent } from "@clerk/nextjs/server";
+import { db } from "~/server/db";
+import { user } from "~/server/db/schema";
+import type { NewUser } from "~/server/db/schema/user";
 
-import { createUser } from "~/server/db/services/user";
+import type { WebhookEvent } from "@clerk/nextjs/server";
 
 
 export async function POST(req: Request) {
@@ -61,27 +63,26 @@ export async function POST(req: Request) {
     const { id, email_addresses, username, first_name, last_name, image_url } =
       evt.data;
 
-    const email = email_addresses[0]?.email_address ?? null; // Default to null if undefined
+    const email = email_addresses[0]?.email_address // Default to null if undefined
 
-    // Prepare user data for creation, ensuring types match NewUser
-    const newUser = {
-      id: id ?? null, // Ensure id is null if undefined
-      email: email ?? null, // Ensure email is null if undefined
-      username: username ?? null, // Ensure username is null if undefined
-      firstName: first_name ?? null, // Use firstName as per NewUser type
-      lastName: last_name ?? null, // Use lastName as per NewUser type
-      image_url: image_url ?? null, // Ensure image_url is null if undefined
-      isActive: false, // Default value
-      createdAt: new Date(), // Current date
-    };
-
-    // Call createUser and handle the response
     try {
-      const createdUser = await createUser(newUser);
-      console.log("User created successfully:", createdUser);
+      const createdUser: NewUser[] = await db
+        .insert(user)
+        .values({
+          id: id, // User ID
+          email: email, // User email
+          username: username, // Username
+          firstName: first_name, // First name
+          lastName: last_name, // Last name
+          image_url: image_url,
+          
+        })
+        .returning();
+
+      return createdUser[0]; // Return the created user
     } catch (error) {
-      console.error("Error during user creation:", error);
-      // Handle error as needed
+      console.error("Error creating user:", error);
+      throw error; // Re-throw the error after logging
     }
   }
 
