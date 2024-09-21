@@ -63,26 +63,29 @@ export async function POST(req: Request) {
 
     const email = email_addresses[0]?.email_address ?? null; // Default to null if undefined
 
-    // Prepare user data for creation, ensuring types match NewUser
-    const newUser = {
-      id: id ?? null, // Ensure id is null if undefined
-      email: email ?? null, // Ensure email is null if undefined
-      username: username ?? null, // Ensure username is null if undefined
-      firstName: first_name ?? null, // Use firstName as per NewUser type
-      lastName: last_name ?? null, // Use lastName as per NewUser type
-      image_url: image_url ?? null, // Ensure image_url is null if undefined
-      isActive: false, // Default value
-      createdAt: new Date(), // Current date
+    const user = {
+      id: id || null, // Ensure id is a string or null
+      email: email, // Email can be string or null
+      username: username ?? null, // Username can be null
+      firstName: first_name ?? null, // First name can be null
+      lastName: last_name ?? null, // Last name can be null
+      image_url: image_url ?? null, // Image URL can be null
+      isActive: false, // Default value for isActive
+      createdAt: new Date(), // Default to current date
     };
 
-    // Call createUser and handle the response
     try {
-      const createdUser = await createUser(newUser);
-      console.log("User created successfully:", createdUser);
+      const newUser = await createUser(user);
+      console.log("User created successfully:", newUser);
     } catch (error) {
       console.error("Error during user creation:", error);
-      // Handle error as needed
     }
+  }
+
+  if (eventType === "user.updated") {
+  }
+
+  if (eventType === "user.deleted") {
   }
 
   console.log(`Webhook with and ID of ${id} and type of ${eventType}`);
