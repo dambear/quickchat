@@ -22,7 +22,7 @@ app.doc("/api/doc", {
 app.get("/api/ui", swaggerUI({ url: "/api/doc" }));
 
 // Route for getting a user by ID
-export const getUserRoute = createRoute({
+const getUserRoute = createRoute({
   method: "get",
   path: "/api/users/{id}",
   request: {
@@ -47,7 +47,7 @@ export const getUserRoute = createRoute({
   tags: ["User"],
 });
 
-export const getAllUsersRoute = createRoute({
+const getAllUsersRoute = createRoute({
   method: "get",
   path: "api/users",
   responses: {
