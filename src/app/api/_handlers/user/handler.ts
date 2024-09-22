@@ -9,7 +9,7 @@ import {
 } from "prisma/lib/functions/user";
 
 export const getUserById_Handler = async (c: Context): Promise<Response> => {
-  const id = c.req.param("id") as string; 
+  const id = c.req.param("id");
 
   try {
     const userData: UserInterface | null = await getUserById(id);
