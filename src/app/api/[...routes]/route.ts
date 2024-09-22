@@ -27,7 +27,7 @@ app.get("/api/ui", swaggerUI({ url: "/api/doc" }));
 // Route for getting a user by ID
 const getUserRoute = createRoute({
   method: "get",
-  path: "/api/users{id}",
+  path: "/api/users/{id}",
   request: {
     params: zod_userParamSchema,
   },
