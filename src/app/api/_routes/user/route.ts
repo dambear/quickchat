@@ -1,19 +1,20 @@
+
 import { createRoute } from "@hono/zod-openapi";
-import { userSchema } from "~/server/db/schema";
-import { userParamSchema } from "~/server/db/schema/user";
+import { zod_userParamSchema, zod_userSchema } from "prisma/lib/zodSchema/user";
+
 
 // Route for getting a user by ID
 export const getUserRoute = createRoute({
   method: "get",
   path: "/api/users/{id}",
   request: {
-    params: userParamSchema,
+    params: zod_userParamSchema,
   },
   responses: {
     200: {
       content: {
         "application/json": {
-          schema: userSchema,
+          schema: zod_userSchema,
         },
       },
       description: "Retrieve the user",
@@ -35,7 +36,7 @@ export const getAllUsersRoute = createRoute({
     200: {
       content: {
         "application/json": {
-          schema: userSchema,
+          schema: zod_userSchema,
         },
       },
       description: "Retrieve all user records",
