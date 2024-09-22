@@ -1,12 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Webhook } from "svix";
 import { headers } from "next/headers";
-
-import { db } from "~/server/db";
-import { user } from "~/server/db/schema";
-import type { NewUser } from "~/server/db/schema/user";
-
 import type { WebhookEvent } from "@clerk/nextjs/server";
 
+import { createUser, type UserInterface } from "prisma/lib/functions/user";
 
 export async function POST(req: Request) {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
@@ -31,8 +30,8 @@ export async function POST(req: Request) {
     });
   }
 
-  const payload = (await req.json()) as unknown;
-
+  // Get the body
+  const payload = await req.json();
   const body = JSON.stringify(payload);
 
   // Create a new Svix instance with your secret.
@@ -63,27 +62,16 @@ export async function POST(req: Request) {
     const { id, email_addresses, username, first_name, last_name, image_url } =
       evt.data;
 
-    const email = email_addresses[0]?.email_address // Default to null if undefined
+    const userData: UserInterface = {
+      id, 
+      email: email_addresses[0]?.email_address ?? "",
+      username: username ?? "",
+      firstName: first_name ?? "",
+      lastName: last_name ?? "",
+      imageUrl: image_url, 
+    };
 
-    try {
-      const createdUser: NewUser[] = await db
-        .insert(user)
-        .values({
-          id: id, // User ID
-          email: email, // User email
-          username: username, // Username
-          firstName: first_name, // First name
-          lastName: last_name, // Last name
-          image_url: image_url,
-          
-        })
-        .returning();
-
-      return createdUser[0]; // Return the created user
-    } catch (error) {
-      console.error("Error creating user:", error);
-      throw error; // Re-throw the error after logging
-    }
+    await createUser(userData);
   }
 
   console.log(`Webhook with and ID of ${id} and type of ${eventType}`);

@@ -1,39 +1,34 @@
-import { eq } from "drizzle-orm";
-import { db } from "~/server/db";
-import { user } from "~/server/db/schema";
-import type { User } from "~/server/db/schema/user";
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import type { Context } from "hono";
+import {
+  getUserById,
+  getUsers,
+  type UserInterface,
+} from "prisma/lib/functions/user";
 
-export const getUser = async (c: Context) => {
-  // Directly extract the ID from the request's path
-  const id = c.req.param("id");
+export const getUserById_Handler = async (c: Context): Promise<Response> => {
+  const id = c.req.param("id") as string; 
 
   try {
-    const userRecord = await db.query.user?.findFirst({
-      where: eq(user.id, id), // Ensure this matches your schema
-    });
-
-    if (!userRecord) {
+    const userData: UserInterface | null = await getUserById(id);
+    if (!userData) {
       return c.json({ message: "User not found" }, 404);
     }
-
-    return c.json(userRecord);
-  } catch (error: unknown) {
-    console.error("Error retrieving user:", error);
-    return c.json({ message: "Error retrieving user" }, 500);
+    return c.json(userData, 200);
+  } catch (error) {
+    console.error("Error retrieving user:", (error as Error).message);
+    return c.json({ message: (error as Error).message }, 500);
   }
 };
 
-export const getAllUsers = async (c: Context) => {
+export const getAllUsers_Handler = async (c: Context): Promise<Response> => {
   try {
-    const users: User[] = await db.query.user.findMany(); // Fetch all users
-    return c.json(users, 200);
-  } catch (error: unknown) {
-    console.error("Error retrieving users:", error);
-    return c.json(
-      { message: "Error retrieving users", error: String(error) },
-      500,
-    );
+    const userData: UserInterface[] = await getUsers();
+    return c.json(userData, 200);
+  } catch (error) {
+    console.error("Error retrieving users:", (error as Error).message);
+    return c.json({ message: (error as Error).message }, 500);
   }
 };
-
