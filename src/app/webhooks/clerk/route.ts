@@ -1,11 +1,15 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import { Webhook } from "svix";
 import { headers } from "next/headers";
 import type { WebhookEvent } from "@clerk/nextjs/server";
 
-import { createUser, type UserInterface } from "prisma/lib/functions/user";
+import {
+  createUser,
+  deleteUser,
+  updateUser,
+  type UserInterface,
+} from "prisma/lib/functions/user";
 
 export async function POST(req: Request) {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
@@ -63,15 +67,46 @@ export async function POST(req: Request) {
       evt.data;
 
     const userData: UserInterface = {
-      id, 
+      id,
       email: email_addresses[0]?.email_address ?? "",
       username: username ?? "",
       firstName: first_name ?? "",
       lastName: last_name ?? "",
-      imageUrl: image_url, 
+      imageUrl: image_url,
     };
 
     await createUser(userData);
+  }
+
+  if (eventType === "user.updated") {
+    const { id, email_addresses, username, first_name, last_name, image_url } =
+      evt.data;
+
+    const userData: UserInterface = {
+      id,
+      email: email_addresses[0]?.email_address ?? "",
+      username: username ?? "",
+      firstName: first_name ?? "",
+      lastName: last_name ?? "",
+      imageUrl: image_url,
+    };
+
+    await updateUser(userData.id, userData);
+  }
+
+  if (eventType === "user.deleted") {
+    const { id } = evt.data;
+
+    const userData: UserInterface = {
+      id: id ?? "",
+      email: null ?? "",
+      username: null ?? "",
+      firstName: null ?? "",
+      lastName: null ?? "",
+      imageUrl: null ?? "",
+    };
+
+    await deleteUser(userData.id);
   }
 
   console.log(`Webhook with and ID of ${id} and type of ${eventType}`);
