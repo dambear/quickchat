@@ -1,11 +1,12 @@
-import { OpenAPIHono } from "@hono/zod-openapi";
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+import { createRoute } from "@hono/zod-openapi";
 import {
   getUsers_Handler,
   getUserById_Handler,
   createUser_Handler,
   updateUser_Handler,
 } from "../_handlers/handler";
-import { createRoute } from "@hono/zod-openapi";
 import {
   zod_createUserSchema,
   zod_updateUserSchema,
@@ -13,124 +14,123 @@ import {
   zod_userSchema,
 } from "prisma/lib/zodSchema/user";
 
-export const app = new OpenAPIHono();
 
-// Route for getting a user by ID
-const getUserRoute = createRoute({
-  method: "get",
-  path: "/api/users/{id}",
-  request: {
-    params: zod_userParamSchema,
-  },
-  responses: {
-    200: {
-      content: {
-        "application/json": {
-          schema: zod_userSchema,
+import { type OpenAPIHono } from "@hono/zod-openapi";
+
+export const userRoutes = (app: OpenAPIHono) => {
+  const getUserRoute = createRoute({
+    method: "get",
+    path: "/api/users/{id}",
+    request: {
+      params: zod_userParamSchema,
+    },
+    responses: {
+      200: {
+        content: {
+          "application/json": {
+            schema: zod_userSchema,
+          },
         },
+        description: "Retrieve the user",
       },
-      description: "Retrieve the user",
-    },
-    404: {
-      description: "User not found",
-    },
-    500: {
-      description: "Error retrieving user",
-    },
-  },
-  tags: ["User"],
-});
-
-const getUsersRoute = createRoute({
-  method: "get",
-  path: "/api/users",
-  responses: {
-    200: {
-      content: {
-        "application/json": {
-          schema: zod_userSchema,
-        },
+      404: {
+        description: "User not found",
       },
-      description: "Retrieve all user records",
-    },
-    500: {
-      description: "Error retrieving users",
-    },
-  },
-  tags: ["User"],
-});
-
-const createUserRoute = createRoute({
-  method: "post",
-  path: "/api/create-user",
-  request: {
-    body: {
-      content: {
-        "application/json": {
-          schema: zod_createUserSchema, // Schema for the new user payload
-        },
+      500: {
+        description: "Error retrieving user",
       },
     },
-  },
-  responses: {
-    201: {
-      content: {
-        "application/json": {
-          schema: zod_userSchema, // Response schema for the created user
-        },
-      },
-      description: "User created successfully",
-    },
-    400: {
-      description: "Invalid input data",
-    },
-    500: {
-      description: "Error creating user",
-    },
-  },
-  tags: ["User"],
-});
+    tags: ["User"],
+  });
 
-const updateUserRoute = createRoute({
-  method: "put", // or "patch" if you prefer
-  path: "/api/users/{id}",
-  request: {
-    params: zod_userParamSchema,
-    body: {
-      content: {
-        "application/json": {
-          schema: zod_updateUserSchema, // Schema for the new user payload
+  const getUsersRoute = createRoute({
+    method: "get",
+    path: "/api/users",
+    responses: {
+      200: {
+        content: {
+          "application/json": {
+            schema: zod_userSchema,
+          },
+        },
+        description: "Retrieve all user records",
+      },
+      500: {
+        description: "Error retrieving users",
+      },
+    },
+    tags: ["User"],
+  });
+
+  const createUserRoute = createRoute({
+    method: "post",
+    path: "/api/create-user",
+    request: {
+      body: {
+        content: {
+          "application/json": {
+            schema: zod_createUserSchema,
+          },
         },
       },
     },
-  },
-  responses: {
-    200: {
-      content: {
-        "application/json": {
-          schema: zod_userSchema, // Response schema for the updated user
+    responses: {
+      201: {
+        content: {
+          "application/json": {
+            schema: zod_userSchema,
+          },
+        },
+        description: "User created successfully",
+      },
+      400: {
+        description: "Invalid input data",
+      },
+      500: {
+        description: "Error creating user",
+      },
+    },
+    tags: ["User"],
+  });
+
+  const updateUserRoute = createRoute({
+    method: "put",
+    path: "/api/users/{id}",
+    request: {
+      params: zod_userParamSchema,
+      body: {
+        content: {
+          "application/json": {
+            schema: zod_updateUserSchema,
+          },
         },
       },
-      description: "User updated successfully",
     },
-    404: {
-      description: "User not found",
+    responses: {
+      200: {
+        content: {
+          "application/json": {
+            schema: zod_userSchema,
+          },
+        },
+        description: "User updated successfully",
+      },
+      404: {
+        description: "User not found",
+      },
+      400: {
+        description: "Invalid input data",
+      },
+      500: {
+        description: "Error updating user",
+      },
     },
-    400: {
-      description: "Invalid input data",
-    },
-    500: {
-      description: "Error updating user",
-    },
-  },
-  tags: ["User"],
-});
+    tags: ["User"],
+  });
 
-// Register the route with the handler
-app.openapi(getUserRoute, getUserById_Handler);
-
-app.openapi(getUsersRoute, getUsers_Handler);
-
-app.openapi(createUserRoute, createUser_Handler);
-
-app.openapi(updateUserRoute, updateUser_Handler);
+  // Register routes with handlers
+  app.openapi(getUserRoute, getUserById_Handler);
+  app.openapi(getUsersRoute, getUsers_Handler);
+  app.openapi(createUserRoute, createUser_Handler);
+  app.openapi(updateUserRoute, updateUser_Handler);
+};
