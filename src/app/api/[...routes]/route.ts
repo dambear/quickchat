@@ -22,4 +22,8 @@ app.get("/api/ui", swaggerUI({ url: "/api/doc" }));
 app.route("/", appUser);
 
 // Export handler for Vercel Edge Functions
+// if this function is not here api will not be exportedd of any get-post-put-delete will not be use
 export const GET = handle(app);
+export const POST = handle(app);
+export const PUT = handle(app);
+export const DELETE = handle(app);
