@@ -17,6 +17,7 @@ export const createUser = async (
 ): Promise<UserInterface> => {
   const user = await db.user.create({
     data: {
+      id: userData.id,
       email: userData.email,
       username: userData.username,
       firstName: userData.firstName,
