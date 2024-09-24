@@ -4,7 +4,7 @@ import { swaggerUI } from "@hono/swagger-ui";
 import { userRoutes } from "../_routes/user"; // Import user routes
 
 // Initialize the OpenAPI Hono app
-export const app = new OpenAPIHono();
+const app = new OpenAPIHono();
 
 // Define your OpenAPI specification
 app.doc("/api/doc", {
