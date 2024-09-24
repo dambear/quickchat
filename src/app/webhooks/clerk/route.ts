@@ -97,16 +97,9 @@ export async function POST(req: Request) {
   if (eventType === "user.deleted") {
     const { id } = evt.data;
 
-    const userData: UserInterface = {
-      id: id ?? "",
-      email: null ?? "",
-      username: null ?? "",
-      firstName: null ?? "",
-      lastName: null ?? "",
-      imageUrl: null ?? "",
-    };
+    const userid:string = id ?? ""
 
-    await deleteUser(userData.id);
+    await deleteUser(userid);
   }
 
   console.log(`Webhook with and ID of ${id} and type of ${eventType}`);
