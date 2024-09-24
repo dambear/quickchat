@@ -1,9 +1,9 @@
 import { handle } from "hono/vercel";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { swaggerUI } from "@hono/swagger-ui";
+import { userRoutes } from "../_routes/user"; // Import user routes
 
-import { app as appUser } from "../_routes/user";
-
+// Initialize the OpenAPI Hono app
 export const app = new OpenAPIHono();
 
 // Define your OpenAPI specification
@@ -18,11 +18,10 @@ app.doc("/api/doc", {
 // Define Swagger UI endpoint
 app.get("/api/ui", swaggerUI({ url: "/api/doc" }));
 
-//declare User Routes
-app.route("/", appUser);
+// Register user routes
+userRoutes(app); // Call the user routes function with the app instance
 
-// Export handler for Vercel Edge Functions
-// if this function is not here api will not be exportedd of any get-post-put-delete will not be use
+// Export handler for Vercel Edge Functions reallly importantt
 export const GET = handle(app);
 export const POST = handle(app);
 export const PUT = handle(app);
